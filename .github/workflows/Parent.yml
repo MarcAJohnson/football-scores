@@ -8,4 +8,4 @@ jobs:
     uses: ./.github/workflows/child.yml
     with:
       test-var-1: Develop
-      json-string: ${{ toJson['string-1', 'string-2'] }}
+      json-string: ${{ toJson(['one', 'two', 'three']) }}
