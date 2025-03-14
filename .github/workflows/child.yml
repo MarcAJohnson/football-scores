@@ -20,7 +20,7 @@ jobs:
         if: ${{ inputs.github_env_vars }}
         run: |
 
-          if [ -z "${{ inputs.github_env_vars }}" ]; then
+          if [ -z '${{ inputs.github_env_vars }}' ]; then
             echo "No environment variables provided."
             exit 0
           fi 
@@ -30,7 +30,7 @@ jobs:
           
           # Loop through each variable from the JSON array
           jq -c '.[]' github_env_vars.json | while IFS= read -r var_name; do
-          
+
             # Remove potential quotes from the variable name
             var_name=$(echo "$var_name" | tr -d '"')
 
