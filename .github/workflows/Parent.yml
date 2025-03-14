@@ -4,24 +4,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  prepare-data:
-    runs-on: ubuntu-latest
-    environment: Develop
-    outputs:
-      gh_env_vars: ${{ steps.generate.outputs.gh_env_vars }}
-    steps:
-      - name: Prepare GitHub Environment Variables
-        id: generate
-        run: |
-          # Preserve JSON format by adding quotes
-          echo "gh_env_vars=$(jq -c -n '${{ vars.GH_ENV_VARS }}')" >> $GITHUB_OUTPUT
-          
-          # Debug output to verify
-          echo "GH_ENV_VARS: ${{ vars.GH_ENV_VARS }}"
-          echo "Output JSON: $(jq -c -n '${{ vars.GH_ENV_VARS }}')"
-
   call-child-workflow:
-    needs: prepare-data
     uses: ./.github/workflows/child.yml
     with:
-      github_env_vars: ${{ needs.prepare-data.outputs.gh_env_vars }}
+      github_env_vars: ${{ vars.ENV_VAR_ONE }}

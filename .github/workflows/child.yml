@@ -3,45 +3,16 @@ name: Child
 on:
   workflow_call:
     inputs:
-      github_env_vars:
-        description: 'An array of strings to determine which GitHub environment variables to pull in'
+      github_env_var:
+        description: 'A variable'
         type: string
         required: true
 
 jobs:
   test-job:
     runs-on: ubuntu-latest
+    environment: Develop
     steps:
-      - name: Debugging Input Variables
-        run: |
-          echo "Received github_env_vars input: '${{ inputs.github_env_vars }}'"
-
-      - name: Set Dynamic GitHub Environment Variables
-        if: ${{ inputs.github_env_vars != '[]' && inputs.github_env_vars != '' }}
-        run: |
-          # Save input to a JSON file
-          echo '${{ inputs.github_env_vars }}' > github_env_vars.json
-          
-          # Debugging to check content of the file
-          cat github_env_vars.json
-          
-          # Loop through each variable from the JSON array
-          jq -c '.[]' github_env_vars.json | while IFS= read -r var_name; do
-            echo "Found variable name: $var_name" 
-
-            # Check if the GitHub environment variable exists
-            # var_value=$(printenv "$var_name")
-            # echo "Fetched value for $var_name: $var_value"  
-            
-            # If the variable is not empty, add it to GITHUB_ENV
-            if [ -n "$var_value" ]; then
-              echo "Setting $var_name=$var_value"
-              echo "$var_name=$var_value" >> $GITHUB_ENV
-            else
-              echo "Warning: $var_name is not set"
-            fi
-          done
-
       - name: Output Env Vars
         run: |
-          env | sort
+          echo ${{ inputs.github_env_var }}
