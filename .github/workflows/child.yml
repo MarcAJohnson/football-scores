@@ -33,8 +33,7 @@ jobs:
             fi
           done
 
-      - name: Verify Environment Variables
+      - name: Output all environment variables
         run: |
-          echo "ENV_VAR_ONE=$ENV_VAR_ONE"
-          echo "ENV_VAR_TWO=$ENV_VAR_TWO"
-          echo "ENV_VAR_THREE=$ENV_VAR_THREE"
+          echo "Listing all environment variables:"
+          printenv 
