@@ -26,7 +26,7 @@ jobs:
             secret_name=$(echo "$item" | jq -r '.secretName')
             env_var=$(echo "$item" | jq -r '.envVar')
 
-            echo '$(az keyvault secret show --name "$secret_name" --vault-name "${{ inputs.key_vault_name }}" --query value -o tsv)'
+            echo '$(az keyvault secret show --name "${secret_name}" --vault-name "${{ inputs.key_vault_name }}" --query value -o tsv)'
             SECRET_VALUE=test
 
             echo "::add-mask::$SECRET_VALUE" # Mask the secret in logs
