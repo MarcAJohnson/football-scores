@@ -2,6 +2,9 @@ name: Parent
 
 on:
   workflow_dispatch:
+  push: 
+    branches:
+      - "main"
 
 jobs:
   prepare-data:
