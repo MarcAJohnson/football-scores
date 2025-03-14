@@ -3,10 +3,6 @@ name: Child
 on:
   workflow_call:
     inputs:
-      test-var-1:
-        description: 'This is the test var 1'
-        type: string
-        required: true
       array_input:
         description: 'This is the test var 2'
         type: string
@@ -25,7 +21,6 @@ jobs:
 
       - name: Parse JSON and output inputs
         run: |
-          echo "var 1 --> ${{ inputs.test-var-1 }}"
           echo "var 2 --> "
           echo '${{ inputs.array_input }}' > input.json
           arr=$(jq -r '.[]' input.json)
