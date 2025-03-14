@@ -25,7 +25,7 @@ jobs:
             secret_name=$(echo "$item" | jq -r '.secretName')
             env_var=$(echo "$item" | jq -r '.envVar')
 
-            SECRET_VALUE="$secret_name"
+            SECRET_VALUE="${secret_name} | ${env_var}"
 
             echo "::add-mask::$SECRET_VALUE" # Mask the secret in logs
             echo "$env_var=$SECRET_VALUE" >> $GITHUB_ENV # Set as an environment variable
