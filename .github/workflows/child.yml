@@ -20,28 +20,33 @@ jobs:
         run: |
           echo '${{ inputs.key_vault_objects }}' > secrets.json
           cat -A secrets.json
+
+      - name: Remove Carriage Returns
+        run: |
+          tr -d '\r' < secrets.json > clean_secrets.json
+          mv clean_secrets.json secrets.json
       
-      # - name: Validate JSON
-      #   run: |
-      #     jq . secrets.json
+      - name: Validate JSON
+        run: |
+          jq . secrets.json
 
-      # - name: Parse JSON Array and Fetch Secrets
-      #   run: |
-      #     echo '${{ inputs.key_vault_objects }}' > secrets.json
-      #     secrets=$(jq -c '.[]' secrets.json)
+      - name: Parse JSON Array and Fetch Secrets
+        run: |
+          echo '${{ inputs.key_vault_objects }}' > secrets.json
+          secrets=$(jq -c '.[]' secrets.json)
 
-      #     while IFS= read -r item; do
-      #       secret_name=$(echo "$item" | jq -r '.secretName')
-      #       env_var=$(echo "$item" | jq -r '.envVar')
+          while IFS= read -r item; do
+            secret_name=$(echo "$item" | jq -r '.secretName')
+            env_var=$(echo "$item" | jq -r '.envVar')
 
-      #       # Fetch the secret from Key Vault
-      #       SECRET_VALUE=$(az keyvault secret show --name "${secret_name}" --vault-name "${{ inputs.key_vault_name }}" --query value -o tsv 2>/dev/null || echo "null")
+            # Fetch the secret from Key Vault
+            SECRET_VALUE=$(az keyvault secret show --name "${secret_name}" --vault-name "${{ inputs.key_vault_name }}" --query value -o tsv 2>/dev/null || echo "null")
 
-      #       # Handle null secret values
-      #       if [ "$SECRET_VALUE" == "null" ] || [ -z "$SECRET_VALUE" ]; then
-      #         echo "⚠️ Warning: Secret '$secret_name' not found or is null"
-      #       else
-      #         echo "::add-mask::$SECRET_VALUE" # Mask the secret in logs
-      #         echo "$env_var=$SECRET_VALUE" >> $GITHUB_ENV # Set as environment variable
-      #       fi
-      #     done <<< "$secrets"
+            # Handle null secret values
+            if [ "$SECRET_VALUE" == "null" ] || [ -z "$SECRET_VALUE" ]; then
+              echo "⚠️ Warning: Secret '$secret_name' not found or is null"
+            else
+              echo "::add-mask::$SECRET_VALUE" # Mask the secret in logs
+              echo "$env_var=$SECRET_VALUE" >> $GITHUB_ENV # Set as environment variable
+            fi
+          done <<< "$secrets"
