@@ -26,10 +26,10 @@ jobs:
     steps:
       - name: Output all inputs
         run: |
-          echo "Input One: ${{ github.event.inputs.ENV_VAR_ONE }}"
-          echo "Input Two: ${{ github.event.inputs.ENV_VAR_TWO }}"
-          echo "Input Three: ${{ github.event.inputs.ENV_VAR_THREE }}"
-          echo "Input Four: ${{ github.event.inputs.test }}"
+          echo "Input One: ${{ inputs.ENV_VAR_ONE }}"
+          echo "Input Two: ${{ inputs.ENV_VAR_TWO }}"
+          echo "Input Three: ${{ inputs.ENV_VAR_THREE }}"
+          echo "Input Four: ${{ inputs.test }}"
 
       - name: Dynamically Set Environment Variables
         run: |
