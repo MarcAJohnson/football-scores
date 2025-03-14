@@ -10,7 +10,7 @@ on:
       key_vault_objects:
         description: 'An array of objects with each object containing info on key vault secrets'
         type: string
-        required: true
+        required: false
 
 jobs:
   test-job:
