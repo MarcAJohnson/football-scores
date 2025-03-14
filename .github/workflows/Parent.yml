@@ -14,7 +14,7 @@ jobs:
         id: generate
         run: |
           echo "secrets_json=$(jq -c -n \
-            ${{ vars.KEY_VAULT_OBJECTS_STRING }}" >> $GITHUB_OUTPUT
+            ${{ vars.KEY_VAULT_OBJECTS_STRING }})" >> $GITHUB_OUTPUT
 
   call-child-workflow:
     needs: prepare-data
