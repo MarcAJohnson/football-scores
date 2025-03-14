@@ -35,18 +35,23 @@ jobs:
         run: |
           echo "TEST_ENV_VAR=1111" >> $GITHUB_ENV
 
-      - name: Dynamically Set Environment Variables
+      - name: Iterate over inputs
         run: |
-          # Loop through all the inputs dynamically
-          for input_name in "${!INPUT_@}"; do
-            value="${!input_name}"
-            if [ -n "$value" ]; then
-              var_name="${input_name#INPUT_}"  # Remove the 'INPUT_' prefix
-              # var_name=$(echo "$var_name" | tr '[:upper:]' '[:lower:]')  # Convert to lowercase if needed
-              echo "Setting environment variable: $var_name=$value"
-              echo "$var_name=$value" >> $GITHUB_ENV
-            fi
-          done
+          input_value="${{ github.event.inputs }}"
+          echo "$input_name: $input_value"
+
+      # - name: Dynamically Set Environment Variables
+      #   run: |
+      #     # Loop through all the inputs dynamically
+      #     for input_name in "${!INPUT_@}"; do
+      #       value="${!input_name}"
+      #       if [ -n "$value" ]; then
+      #         var_name="${input_name#INPUT_}"  # Remove the 'INPUT_' prefix
+      #         # var_name=$(echo "$var_name" | tr '[:upper:]' '[:lower:]')  # Convert to lowercase if needed
+      #         echo "Setting environment variable: $var_name=$value"
+      #         echo "$var_name=$value" >> $GITHUB_ENV
+      #       fi
+      #     done
 
       - name: Output all environment variables
         run: |
