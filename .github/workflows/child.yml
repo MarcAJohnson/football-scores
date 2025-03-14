@@ -31,6 +31,10 @@ jobs:
           echo "Input Three: ${{ inputs.ENV_VAR_THREE }}"
           echo "Input Four: ${{ inputs.test }}"
 
+      - name: Set a env var
+        run: |
+          echo "TEST_ENV_VAR=1111" >> $GITHUB_ENV
+
       - name: Dynamically Set Environment Variables
         run: |
           # Loop through all the inputs dynamically
