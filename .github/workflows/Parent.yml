@@ -17,7 +17,8 @@ jobs:
       #       '${{ vars.KEY_VAULT_OBJECTS_STRING }}')" >> $GITHUB_OUTPUT
       - name: Prepare GitHub Environment Variables
         run: |
-          echo "gh_env_vars='${{ vars.GH_ENV_VARS }}'" >> $GITHUB_OUTPUT
+          echo "gh_env_vars=$(jq -c -n \
+            '${{ vars.GH_ENV_VARS }}')" >> $GITHUB_OUTPUT
 
   call-child-workflow:
     needs: prepare-data
