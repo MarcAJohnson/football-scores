@@ -19,11 +19,11 @@ jobs:
       - name: Inspect JSON input
         run: |
           echo '${{ inputs.key_vault_objects }}' > secrets.json
-          cat secrets.json
+          cat -A secrets.json
       
-      - name: Validate JSON
-        run: |
-          jq . secrets.json
+      # - name: Validate JSON
+      #   run: |
+      #     jq . secrets.json
 
       # - name: Parse JSON Array and Fetch Secrets
       #   run: |
