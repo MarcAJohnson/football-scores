@@ -13,7 +13,7 @@ jobs:
       - name: Generate JSON Array
         id: generate
         run: |
-          echo "key_vault_objects=${{ vars.KEY_VAULT_OBJECTS_STRING }})" >> $GITHUB_OUTPUT
+          echo "key_vault_objects=${{ vars.KEY_VAULT_OBJECTS_STRING }}" >> $GITHUB_OUTPUT
 
   call-child-workflow:
     needs: prepare-data
