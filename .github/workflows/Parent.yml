@@ -7,14 +7,18 @@ jobs:
   prepare-data:
     runs-on: ubuntu-latest
     outputs:
-      array_json: ${{ steps.generate.outputs.array_json }}
+      key_vault_objects: ${{ steps.generate.outputs.key_vault_objects }}
     steps:
       - name: Generate JSON Array
         id: generate
-        run: echo "array_json=$(jq -c -n '["one", "two", "three"]')" >> $GITHUB_OUTPUT
+        run: |
+          echo 'key_vault_objects=$(jq -c -n \
+            '[{"secretName": "api-key", "envVar": "API_KEY"}, {"secretName": "font-token", "envVar": "FONT_TOKaEN"}]')" >> $GITHUB_OUTPUT
 
   call-child-workflow:
     needs: prepare-data
     uses: ./.github/workflows/child.yml
     with:
-      array_input: ${{ needs.prepare-data.outputs.array_json }}
+      key_vault_name: "Key Vault 1"
+      key_vault_objects: ${{ needs.prepare-data.outputs.key_vault_objects }}
+
