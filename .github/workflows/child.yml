@@ -16,8 +16,12 @@ jobs:
   test-job:
     runs-on: ubuntu-latest
     steps:
+      - name: Output input
+        run: |
+          echo ${{ inputs.github_env_vars }}
+          
       - name: Set Dynamic GitHub Environment Variables
-        if: ${{ inputs.github_env_vars != '' }}
+        if: ${{ inputs.github_env_vars }}
         run: |
           # Save input to a JSON file
           echo '${{ inputs.github_env_vars }}' > github_env_vars.json
