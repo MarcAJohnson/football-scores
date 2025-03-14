@@ -18,4 +18,15 @@ jobs:
     steps:
       - name: Parse JSON Array and Fetch Secrets
         run: |
-          echo '${{ inputs.key_vault_objects }}'
+          echo '${{ inputs.key_vault_objects }}' > secrets.json
+          secrets=$(jq -c '.[]' secrets.json)
+
+          while IFS= read -r item; do
+            secret_name=$(echo "$item" | jq -r '.secretName')
+            env_var=$(echo "$item" | jq -r '.envVar')
+
+            SECRET_VALUE="$secret_name"
+
+            echo "::add-mask::$SECRET_VALUE" # Mask the secret in logs
+            echo "$env_var=$SECRET_VALUE" >> $GITHUB_ENV # Set as an environment variable
+          done <<< "$secrets"
