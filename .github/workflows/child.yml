@@ -27,6 +27,11 @@ jobs:
 
             SECRET_VALUE="${secret_name} | ${env_var}"
 
-            echo "::add-mask::$SECRET_VALUE" # Mask the secret in logs
+            echo "HERE ${SECRET_VALUE}"
+
             echo "$env_var=$SECRET_VALUE" >> $GITHUB_ENV # Set as an environment variable
           done <<< "$secrets"
+      
+      - name: Output env vars
+        run: |
+          env | sort
