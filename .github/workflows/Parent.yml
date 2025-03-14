@@ -7,4 +7,4 @@ jobs:
   call-child-workflow:
     uses: ./.github/workflows/child.yml
     with:
-      github_env_vars: ${{ vars.ENV_VAR_ONE }}
+      github_env_var: ${{ vars.ENV_VAR_ONE }}
