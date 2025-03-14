@@ -16,10 +16,23 @@ jobs:
   test-job:
     runs-on: ubuntu-latest
     steps:
+      - name: Handle Empty Input
+        run: |
+          # If the input is empty or not provided, create an empty JSON array
+          if [ -z "${{ inputs.key_vault_objects }}" ]; then
+            echo "[]" > secrets.json
+          else
+            echo '${{ inputs.key_vault_objects }}' > secrets.json
+          fi
       - name: Parse JSON Array and Fetch Secrets
         run: |
           echo '${{ inputs.key_vault_objects }}' > secrets.json
           secrets=$(jq -c '.[]' secrets.json)
+          
+          if [ -z "$secrets" ]; then
+            echo "No secrets to process."
+            exit 0
+          fi
 
           while IFS= read -r item; do
             secret_name=$(echo "$item" | jq -r '.secretName')
