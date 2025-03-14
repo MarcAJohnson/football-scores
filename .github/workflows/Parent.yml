@@ -8,13 +8,8 @@ jobs:
     runs-on: ubuntu-latest
     environment: Develop
     outputs:
-      key_vault_objects: ${{ steps.generate.outputs.key_vault_objects }}
+      gh_env_vars: ${{ steps.generate.outputs.gh_env_vars }}
     steps:
-      # - name: Generate JSON Array
-      #   id: generate
-      #   run: |
-      #     echo "key_vault_objects=$(jq -c -n \
-      #       '${{ vars.KEY_VAULT_OBJECTS_STRING }}')" >> $GITHUB_OUTPUT
       - name: Prepare GitHub Environment Variables
         run: |
           echo "gh_env_vars=$(jq -c -n \
@@ -24,7 +19,5 @@ jobs:
     needs: prepare-data
     uses: ./.github/workflows/child.yml
     with:
-      key_vault_name: "Key Vault 1"
-      # key_vault_objects: ${{ needs.prepare-data.outputs.key_vault_objects }}
       github_env_vars: ${{ needs.prepare-data.outputs.gh_env_vars }}
 
