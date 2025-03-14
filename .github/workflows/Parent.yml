@@ -13,7 +13,7 @@ jobs:
         id: generate
         run: |
           echo "key_vault_objects=$(jq -c -n \
-            '[{"secretName": "api-key", "envVar": "API_KEY"}, {"secretName": "font-token", "envVar": "FONT_TOKaEN"}]')" >> $GITHUB_OUTPUT
+            ${{ vars.KEY_VAULT_OBJECTS_STRING }})" >> $GITHUB_OUTPUT
 
   call-child-workflow:
     needs: prepare-data
