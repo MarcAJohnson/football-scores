@@ -26,24 +26,24 @@ jobs:
           cat github_env_vars.json
           
           # Loop through each variable from the JSON array
-          # jq -c '.[]' github_env_vars.json | while IFS= read -r var_name; do
-          #   echo "Found variable name: $var_name"  # Debugging
+          jq -c '.[]' github_env_vars.json | while IFS= read -r var_name; do
+            echo "Found variable name: $var_name"  # Debugging
             
-          #   # Remove potential quotes from the variable name
-          #   var_name=$(echo "$var_name" | tr -d '"')
+            # Remove potential quotes from the variable name
+            var_name=$(echo "$var_name" | tr -d '"')
 
-          #   # Check if the GitHub environment variable exists
-          #   var_value=$(printenv "$var_name")
-          #   echo "Fetched value for $var_name: $var_value"  # Debugging
+            # # Check if the GitHub environment variable exists
+            # var_value=$(printenv "$var_name")
+            # echo "Fetched value for $var_name: $var_value"  # Debugging
             
-          #   # If the variable is not empty, add it to GITHUB_ENV
-          #   if [ -n "$var_value" ]; then
-          #     echo "Setting $var_name=$var_value"
-          #     echo "$var_name=$var_value" >> $GITHUB_ENV
-          #   else
-          #     echo "Warning: $var_name is not set"
-          #   fi
-          # done
+            # # If the variable is not empty, add it to GITHUB_ENV
+            # if [ -n "$var_value" ]; then
+            #   echo "Setting $var_name=$var_value"
+            #   echo "$var_name=$var_value" >> $GITHUB_ENV
+            # else
+            #   echo "Warning: $var_name is not set"
+            fi
+          done
 
       - name: Output Env Vars
         run: |
