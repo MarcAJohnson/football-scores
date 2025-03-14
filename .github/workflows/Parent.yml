@@ -11,6 +11,7 @@ jobs:
       gh_env_vars: ${{ steps.generate.outputs.gh_env_vars }}
     steps:
       - name: Prepare GitHub Environment Variables
+        id: generate 
         run: |
           echo "gh_env_vars=${{ vars.GH_ENV_VARS }}" >> $GITHUB_OUTPUT
 
