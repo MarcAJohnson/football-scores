@@ -11,11 +11,32 @@ on:
         description: 'An array of objects with each object containing info on key vault secrets'
         type: string
         required: false
+      ENV_VAR_ONE:
+        description: '[build-var] Test variable'
+        type: string
+        required: false
+      ENV_VAR_TWO:
+        description: '[workflow-var] Another variable'
+        type: string
+        required: false
+      # Can I set an env var here?
+      ENV_VAR_THREE:
+        description: '[build-var] Example variable'
+        type: string
+        required: false
 
 jobs:
   test-job:
     runs-on: ubuntu-latest
     steps:
+      - name: Set inputs as environment variables
+        run: |
+          inputs='${{ toJson(inputs) }}'
+          echo "$inputs" | jq -r 'to_entries | .[] | "\(.key)=\(.value)"' | while IFS= read -r line; do
+            echo "Setting $line"
+            echo "$line" >> $GITHUB_ENV
+          done
+
       - name: Handle Empty key_vault_objects Input
         run: |
           # If the input is empty or not provided, create an empty JSON array

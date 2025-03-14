@@ -2,21 +2,22 @@ name: Parent
 
 on:
   workflow_dispatch:
-  push: 
-    branches: 
-      - "main"
 
 jobs:
   prepare-data:
     runs-on: ubuntu-latest
     environment: Develop
     outputs:
-      ENV_VAR_ONE: ${{ steps.get-env.outputs.ENV_VAR_ONE }}
-      ENV_VAR_TWO: ${{ steps.get-env.outputs.ENV_VAR_TWO }}
-      ENV_VAR_THREE: ${{ steps.get-env.outputs.ENV_VAR_THREE }}
+      key_vault_objects: ${{ steps.generate.outputs.key_vault_objects }}
     steps:
-      - name: Get Environment Variable
-        id: get-env
+      - name: Generate JSON Array
+        id: generate
+        run: |
+          echo "key_vault_objects=$(jq -c -n \
+            '${{ vars.KEY_VAULT_OBJECTS_STRING }}')" >> $GITHUB_OUTPUT
+
+      - name: Generate env vars as outputs
+        id: generate2
         run: |
           echo "ENV_VAR_ONE=${{ vars.ENV_VAR_ONE }}" >> $GITHUB_OUTPUT
           echo "ENV_VAR_TWO=${{ vars.ENV_VAR_TWO }}" >> $GITHUB_OUTPUT
@@ -26,8 +27,14 @@ jobs:
     needs: prepare-data
     uses: ./.github/workflows/child.yml
     with:
+      key_vault_name: "Key Vault 1"
+      key_vault_objects: ${{ needs.prepare-data.outputs.key_vault_objects }}
       ENV_VAR_ONE: ${{ needs.prepare-data.outputs.ENV_VAR_ONE }}
       ENV_VAR_TWO: ${{ needs.prepare-data.outputs.ENV_VAR_TWO }}
-      #Can I put a comment here?
       ENV_VAR_THREE: ${{ needs.prepare-data.outputs.ENV_VAR_THREE }}
-      test: 'test'
+
+
+
+      
+
+
