@@ -16,7 +16,6 @@ jobs:
   test-job:
     runs-on: ubuntu-latest
     steps:
-
       - name: Parse JSON Array and Fetch Secrets
         run: |
           echo '${{ inputs.key_vault_objects }}' > secrets.json
@@ -26,9 +25,14 @@ jobs:
             secret_name=$(echo "$item" | jq -r '.secretName')
             env_var=$(echo "$item" | jq -r '.envVar')
 
-            echo '$(az keyvault secret show --name "${secret_name}" --vault-name "${{ inputs.key_vault_name }}" --query value -o tsv)'
-            SECRET_VALUE=test
+            # Fetch the secret from Key Vault
+            SECRET_VALUE=$(az keyvault secret show --name "${secret_name}" --vault-name "${{ inputs.key_vault_name }}" --query value -o tsv 2>/dev/null || echo "null")
 
-            echo "::add-mask::$SECRET_VALUE" # Mask the secret in logs
-            echo "$env_var=$SECRET_VALUE" >> $GITHUB_ENV # Set as an environment variable
+            # Handle null secret values
+            if [ "$SECRET_VALUE" == "null" ] || [ -z "$SECRET_VALUE" ]; then
+              echo "⚠️ Warning: Secret '$secret_name' not found or is null"
+            else
+              echo "::add-mask::$SECRET_VALUE" # Mask the secret in logs
+              echo "$env_var=$SECRET_VALUE" >> $GITHUB_ENV # Set as environment variable
+            fi
           done <<< "$secrets"
