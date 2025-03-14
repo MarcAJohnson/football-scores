@@ -7,7 +7,7 @@ on:
         description: 'This is the test var 1'
         type: string
         required: true
-      json-string:
+      array_input:
         description: 'This is the test var 2'
         type: string
         required: true
@@ -27,7 +27,7 @@ jobs:
         run: |
           echo "var 1 --> ${{ inputs.test-var-1 }}"
           echo "var 2 --> "
-          echo '${{ inputs.json-string }}' > input.json
+          echo '${{ inputs.array_input }}' > input.json
           arr=$(jq -r '.[]' input.json)
           for item in $arr; do
             echo "Item: $item"

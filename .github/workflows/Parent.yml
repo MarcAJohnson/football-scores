@@ -8,4 +8,6 @@ jobs:
     uses: ./.github/workflows/child.yml
     with:
       test-var-1: Develop
-      json-string: ${{ toJson(['one', 'two', 'three']) }}
+      array_input: ${{ toJson(env.ARRAY) }}
+    env:
+      ARRAY: '["one", "two", "three"]'
