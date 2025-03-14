@@ -37,8 +37,7 @@ jobs:
 
       - name: Iterate over inputs
         run: |
-          input_value="${{ inputs }}"
-          echo "$input_name: $input_value"
+          echo '${{ toJson(inputs) }}'
 
       # - name: Dynamically Set Environment Variables
       #   run: |
