@@ -18,4 +18,4 @@ jobs:
     steps:
       - name: Parse JSON Array and Fetch Secrets
         run: |
-          echo ${{ inputs.key_vault_objects }}
+          echo '${{ inputs.key_vault_objects }}'
