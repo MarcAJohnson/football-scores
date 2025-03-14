@@ -12,7 +12,7 @@ jobs:
       - name: Generate JSON Array
         id: generate
         run: |
-          echo 'key_vault_objects=$(jq -c -n \
+          echo "key_vault_objects=$(jq -c -n \
             '[{"secretName": "api-key", "envVar": "API_KEY"}, {"secretName": "font-token", "envVar": "FONT_TOKaEN"}]')" >> $GITHUB_OUTPUT
 
   call-child-workflow:
