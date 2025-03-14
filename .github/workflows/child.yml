@@ -4,15 +4,16 @@ on:
   workflow_call:
     inputs:
       ENV_VAR_ONE:
-        description: 'Test variable'
+        description: '[build-var] Test variable'
         type: string
         required: false
       ENV_VAR_TWO:
-        description: 'Another variable'
+        description: '[workflow-var] Another variable'
         type: string
         required: false
+      # Can I set an env var here?
       ENV_VAR_THREE:
-        description: 'Example variable'
+        description: '[build-var] Example variable'
         type: string
         required: false
       test:
@@ -42,19 +43,6 @@ jobs:
             echo "Setting $line"
             echo "$line" >> $GITHUB_ENV
           done
-
-      # - name: Dynamically Set Environment Variables
-      #   run: |
-      #     # Loop through all the inputs dynamically
-      #     for input_name in "${!INPUT_@}"; do
-      #       value="${!input_name}"
-      #       if [ -n "$value" ]; then
-      #         var_name="${input_name#INPUT_}"  # Remove the 'INPUT_' prefix
-      #         # var_name=$(echo "$var_name" | tr '[:upper:]' '[:lower:]')  # Convert to lowercase if needed
-      #         echo "Setting environment variable: $var_name=$value"
-      #         echo "$var_name=$value" >> $GITHUB_ENV
-      #       fi
-      #     done
 
       - name: Output all environment variables
         run: |
