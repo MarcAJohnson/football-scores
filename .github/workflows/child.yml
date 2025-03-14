@@ -19,18 +19,19 @@ jobs:
       - name: Set Dynamic GitHub Environment Variables
         if: ${{ inputs.github_env_vars }}
         run: |
-
-          if [ -z '${{ inputs.github_env_vars }}' ]; then
+          if [ -z "${{ inputs.github_env_vars }}" ]; then
             echo "No environment variables provided."
             exit 0
           fi 
 
           # Save input to a JSON file
           echo '${{ inputs.github_env_vars }}' > github_env_vars.json
-          
+
+          # Debug output to verify content
+          cat github_env_vars.json
+
           # Loop through each variable from the JSON array
           jq -c '.[]' github_env_vars.json | while IFS= read -r var_name; do
-
             # Remove potential quotes from the variable name
             var_name=$(echo "$var_name" | tr -d '"')
 
