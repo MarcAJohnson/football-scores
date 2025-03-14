@@ -1,0 +1,51 @@
+name: Child
+
+on:
+  workflow_call:
+    inputs:
+      key_vault_name:
+        description: 'Name of key vault'
+        type: string
+        required: true
+      key_vault_objects:
+        description: 'An array of objects with each object containing info on key vault secrets'
+        type: string
+        required: false
+
+jobs:
+  test-job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Handle Empty key_vault_objects Input
+        run: |
+          # If the input is empty or not provided, create an empty JSON array
+          if [ -z "${{ inputs.key_vault_objects }}" ]; then
+            echo "[]" > secrets.json
+          else
+            echo '${{ inputs.key_vault_objects }}' > secrets.json
+          fi
+        
+      - name: Parse JSON Array and Fetch Key Vault Secrets
+        run: |
+          echo '${{ inputs.key_vault_objects }}' > secrets.json
+          secrets=$(jq -c '.[]' secrets.json)
+          
+          if [ -z "$secrets" ]; then
+            echo "No secrets to process."
+            exit 0
+          fi
+
+          while IFS= read -r item; do
+            secret_name=$(echo "$item" | jq -r '.secretName')
+            env_var=$(echo "$item" | jq -r '.envVar')
+
+            SECRET_VALUE="${secret_name} | ${env_var}"
+
+            echo "HERE ${SECRET_VALUE}"
+
+            echo "$env_var=$SECRET_VALUE" >> $GITHUB_ENV # Set as an environment variable
+          done <<< "$secrets"
+      
+      - name: Output env vars
+        run: |
+          env | sort

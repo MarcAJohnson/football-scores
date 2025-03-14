@@ -7,8 +7,8 @@ on:
         description: 'Name of key vault'
         type: string
         required: true
-      key_vault_objects:
-        description: 'An array of objects with each object containing info on key vault secrets'
+      github_env_vars:
+        description: 'An array of strings to determine which GitHub environment variables to pull in'
         type: string
         required: false
 
@@ -16,35 +16,29 @@ jobs:
   test-job:
     runs-on: ubuntu-latest
     steps:
-      - name: Handle Empty Input
+      - name: Set Dynamic GitHub Environment Variables
+        if: ${{ inputs.github_env_vars != '' }}
         run: |
-          # If the input is empty or not provided, create an empty JSON array
-          if [ -z "${{ inputs.key_vault_objects }}" ]; then
-            echo "[]" > secrets.json
-          else
-            echo '${{ inputs.key_vault_objects }}' > secrets.json
-          fi
-      - name: Parse JSON Array and Fetch Secrets
-        run: |
-          echo '${{ inputs.key_vault_objects }}' > secrets.json
-          secrets=$(jq -c '.[]' secrets.json)
+          # Save input to a JSON file
+          echo '${{ inputs.github_env_vars }}' > github_env_vars.json
           
-          if [ -z "$secrets" ]; then
-            echo "No secrets to process."
-            exit 0
-          fi
+          # Loop through each variable from the JSON array
+          jq -c '.[]' github_env_vars.json | while IFS= read -r var_name; do
+            # Remove potential quotes from the variable name
+            var_name=$(echo "$var_name" | tr -d '"')
 
-          while IFS= read -r item; do
-            secret_name=$(echo "$item" | jq -r '.secretName')
-            env_var=$(echo "$item" | jq -r '.envVar')
-
-            SECRET_VALUE="${secret_name} | ${env_var}"
-
-            echo "HERE ${SECRET_VALUE}"
-
-            echo "$env_var=$SECRET_VALUE" >> $GITHUB_ENV # Set as an environment variable
-          done <<< "$secrets"
+            # Access the GitHub environment variable
+            var_value=$(printenv "$var_name")
+            
+            # If the variable is not empty, add it to GITHUB_ENV
+            if [ -n "$var_value" ]; then
+              echo "Setting $var_name=$var_value"
+              echo "$var_name=$var_value" >> $GITHUB_ENV
+            else
+              echo "Warning: $var_name is not set"
+            fi
+          done
       
-      - name: Output env vars
+      - name: Output Env Vars
         run: |
           env | sort
