@@ -20,6 +20,12 @@ jobs:
   set-env-vars:
     runs-on: ubuntu-latest
     steps:
+      - name: Output all inputs
+        run: |
+          echo "Input One: ${{ github.event.inputs.ENV_VAR_ONE }}"
+          echo "Input Two: ${{ github.event.inputs.ENV_VAR_TWO }}"
+          echo "Input Three: ${{ github.event.inputs.ENV_VAR_THREE }}"
+
       - name: Dynamically Set Environment Variables
         run: |
           # Loop through all the inputs dynamically
