@@ -4,10 +4,17 @@ on:
   workflow_dispatch:
 
 jobs:
-  run-child:
+  prepare-data:
+    runs-on: ubuntu-latest
+    outputs:
+      array_json: ${{ steps.generate.outputs.array_json }}
+    steps:
+      - name: Generate JSON Array
+        id: generate
+        run: echo "array_json=$(jq -c -n '["one", "two", "three"]')" >> $GITHUB_OUTPUT
+
+  call-child-workflow:
+    needs: prepare-data
     uses: ./.github/workflows/child.yml
     with:
-      test-var-1: Develop
-      array_input: ${{ toJson(env.ARRAY) }}
-    env:
-      ARRAY: '["one", "two", "three"]'
+      array_input: ${{ needs.prepare-data.outputs.array_json }}
