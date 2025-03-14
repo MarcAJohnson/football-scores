@@ -15,6 +15,10 @@ on:
         description: 'Example variable'
         type: string
         required: false
+      test:
+        description: 'test'
+        type: string
+        required: true
 
 jobs:
   set-env-vars:
@@ -25,6 +29,7 @@ jobs:
           echo "Input One: ${{ github.event.inputs.ENV_VAR_ONE }}"
           echo "Input Two: ${{ github.event.inputs.ENV_VAR_TWO }}"
           echo "Input Three: ${{ github.event.inputs.ENV_VAR_THREE }}"
+          echo "Input Four: ${{ github.event.inputs.test }}"
 
       - name: Dynamically Set Environment Variables
         run: |
