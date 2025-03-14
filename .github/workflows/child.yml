@@ -3,16 +3,38 @@ name: Child
 on:
   workflow_call:
     inputs:
-      github_env_var:
-        description: 'A variable'
+      ENV_VAR_ONE:
+        description: 'Test variable'
         type: string
-        required: true
+        required: false
+      ENV_VAR_TWO:
+        description: 'Another variable'
+        type: string
+        required: false
+      ENV_VAR_THREE:
+        description: 'Example variable'
+        type: string
+        required: false
 
 jobs:
-  test-job:
+  set-env-vars:
     runs-on: ubuntu-latest
-    environment: Develop
     steps:
-      - name: Output Env Vars
+      - name: Dynamically Set Environment Variables
         run: |
-          echo ${{ inputs.github_env_var }}
+          # Loop through all the inputs dynamically
+          for input_name in "${!INPUT_@}"; do
+            value="${!input_name}"
+            if [ -n "$value" ]; then
+              var_name="${input_name#INPUT_}"  # Remove the 'INPUT_' prefix
+              # var_name=$(echo "$var_name" | tr '[:upper:]' '[:lower:]')  # Convert to lowercase if needed
+              echo "Setting environment variable: $var_name=$value"
+              echo "$var_name=$value" >> $GITHUB_ENV
+            fi
+          done
+
+      - name: Verify Environment Variables
+        run: |
+          echo "ENV_VAR_ONE=$ENV_VAR_ONE"
+          echo "ENV_VAR_TWO=$ENV_VAR_TWO"
+          echo "ENV_VAR_THREE=$ENV_VAR_THREE"

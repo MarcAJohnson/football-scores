@@ -4,7 +4,25 @@ on:
   workflow_dispatch:
 
 jobs:
+  prepare-data:
+    runs-on: ubuntu-latest
+    environment: Develop
+    outputs:
+      ENV_VAR_ONE: ${{ steps.get-env.outputs.ENV_VAR_ONE }}
+      ENV_VAR_TWO: ${{ steps.get-env.outputs.ENV_VAR_TWO }}
+      ENV_VAR_THREE: ${{ steps.get-env.outputs.ENV_VAR_THREE }}
+    steps:
+      - name: Get Environment Variable
+        id: get-env
+        run: |
+          echo "ENV_VAR_ONE=${{ vars.ENV_VAR_ONE }}" >> $GITHUB_OUTPUT
+          echo "ENV_VAR_TWO=${{ vars.ENV_VAR_TWO }}" >> $GITHUB_OUTPUT
+          echo "ENV_VAR_THREE=${{ vars.ENV_VAR_THREE }}" >> $GITHUB_OUTPUT
+
   call-child-workflow:
+    needs: prepare-data
     uses: ./.github/workflows/child.yml
     with:
-      github_env_var: ${{ vars.ENV_VAR_ONE }}
+      ENV_VAR_ONE: ${{ needs.prepare-data.outputs.ENV_VAR_ONE }}
+      ENV_VAR_TWO: ${{ needs.prepare-data.outputs.ENV_VAR_TWO }}
+      ENV_VAR_THREE: ${{ needs.prepare-data.outputs.ENV_VAR_THREE }}
