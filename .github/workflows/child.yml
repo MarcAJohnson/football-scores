@@ -16,20 +16,6 @@ jobs:
   test-job:
     runs-on: ubuntu-latest
     steps:
-      - name: Inspect JSON input
-        run: |
-          echo '${{ inputs.key_vault_objects }}' > secrets.json
-          cat -A secrets.json
-
-      - name: Remove Carriage Returns
-        run: |
-          tr -d '\r' < secrets.json > clean_secrets.json
-          mv clean_secrets.json secrets.json
-      
-      - name: Validate JSON
-        run: |
-          jq . secrets.json
-
       - name: Parse JSON Array and Fetch Secrets
         run: |
           echo '${{ inputs.key_vault_objects }}' > secrets.json
