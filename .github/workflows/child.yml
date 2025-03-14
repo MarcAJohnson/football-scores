@@ -37,7 +37,7 @@ jobs:
 
       - name: Iterate over inputs
         run: |
-          input_value="${{ github.event.inputs }}"
+          input_value="${{ inputs }}"
           echo "$input_name: $input_value"
 
       # - name: Dynamically Set Environment Variables
