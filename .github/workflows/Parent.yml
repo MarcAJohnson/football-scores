@@ -1,0 +1,11 @@
+name: Parent
+
+on:
+  workflow_dispatch:
+
+jobs:
+  run-child:
+    uses: ./.github/workflows/child.yml
+    with:
+      test-var-1: Develop
+      json-string: ${{ toJson['string-1', 'string-2'] }}

@@ -1,0 +1,33 @@
+name: Child
+
+on:
+  workflow_call:
+    inputs:
+      test-var-1:
+        description: 'This is the test var 1'
+        type: string
+        required: true
+      json-string:
+        description: 'This is the test var 2'
+        type: string
+        required: true
+
+permissions:
+  issues: write
+  contents: read
+
+jobs:
+  test-job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Parse JSON and output inputs
+        run: |
+          echo "var 1 --> ${{ inputs.test-var-1 }}"
+          echo "var 2 --> "
+          echo '${{ inputs.json-string }}' > input.json
+          arr=$(jq -r '.[]' input.json)
+          for item in $arr; do
+            echo "Item: $item"
