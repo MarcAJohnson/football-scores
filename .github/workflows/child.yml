@@ -15,10 +15,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Parse JSON and output inputs
+      - name: Parse JSON
         run: |
-          echo "var 2 --> "
           echo '${{ inputs.array_input }}' > input.json
           arr=$(jq -r '.[]' input.json)
           for item in $arr; do
             echo "Item: $item"
+          done
