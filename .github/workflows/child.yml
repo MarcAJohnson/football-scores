@@ -3,6 +3,14 @@ name: Child
 on:
   workflow_call:
     inputs:
+      key_vault_name:
+        description: 'Name of key vault'
+        type: string
+        required: true
+      key_vault_objects:
+        description: 'An array of objects with each object containing info on key vault secrets'
+        type: string
+        required: false
       ENV_VAR_ONE:
         description: '[build-var] Test variable'
         type: string
@@ -16,26 +24,11 @@ on:
         description: '[build-var] Example variable'
         type: string
         required: false
-      test:
-        description: 'test'
-        type: string
-        required: true
 
 jobs:
-  set-env-vars:
+  test-job:
     runs-on: ubuntu-latest
     steps:
-      - name: Output all inputs
-        run: |
-          echo "Input One: ${{ inputs.ENV_VAR_ONE }}"
-          echo "Input Two: ${{ inputs.ENV_VAR_TWO }}"
-          echo "Input Three: ${{ inputs.ENV_VAR_THREE }}"
-          echo "Input Four: ${{ inputs.test }}"
-
-      - name: Set a env var
-        run: |
-          echo "TEST_ENV_VAR=1111" >> $GITHUB_ENV
-
       - name: Set inputs as environment variables
         run: |
           inputs='${{ toJson(inputs) }}'
@@ -44,6 +37,36 @@ jobs:
             echo "$line" >> $GITHUB_ENV
           done
 
+      - name: Handle Empty key_vault_objects Input
+        run: |
+          # If the input is empty or not provided, create an empty JSON array
+          if [ -z "${{ inputs.key_vault_objects }}" ]; then
+            echo "[]" > secrets.json
+          else
+            echo '${{ inputs.key_vault_objects }}' > secrets.json
+          fi
+        
+      - name: Parse JSON Array and Fetch Key Vault Secrets
+        run: |
+          echo '${{ inputs.key_vault_objects }}' > secrets.json
+          secrets=$(jq -c '.[]' secrets.json)
+          
+          if [ -z "$secrets" ]; then
+            echo "No secrets to process."
+            exit 0
+          fi
+
+          while IFS= read -r item; do
+            secret_name=$(echo "$item" | jq -r '.secretName')
+            env_var=$(echo "$item" | jq -r '.envVar')
+
+            SECRET_VALUE="${secret_name} | ${env_var}"
+
+            echo "HERE ${SECRET_VALUE}"
+
+            echo "$env_var=$SECRET_VALUE" >> $GITHUB_ENV # Set as an environment variable
+          done <<< "$secrets"
+      
       - name: Output all environment variables
         run: |
           echo "Listing all environment variables:"
