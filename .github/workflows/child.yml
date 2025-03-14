@@ -35,9 +35,13 @@ jobs:
         run: |
           echo "TEST_ENV_VAR=1111" >> $GITHUB_ENV
 
-      - name: Iterate over inputs
+      - name: Set inputs as environment variables
         run: |
-          echo '${{ toJson(inputs) }}'
+          inputs='${{ toJson(inputs) }}'
+          echo "$inputs" | jq -r 'to_entries | .[] | "\(.key)=\(.value)"' | while IFS= read -r line; do
+            echo "Setting $line"
+            echo "$line" >> $GITHUB_ENV
+          done
 
       # - name: Dynamically Set Environment Variables
       #   run: |
